@@ -109,7 +109,32 @@ def load_model():
         datawrapper = data.RealisticDatasetDetrWrapper(dataset, known_split=None, batch_size=batch_size)
         return dataset, datawrapper
     
-    # Load dataset and model using custom loader
+    # Custom function to load model with pre-trained weights
+    def custom_load_model(data_config):
+        import models
+        import torch
+        from torch import nn
+        
+        # Build the model
+        model, criterion = models.build_former(shape_experiment.in_config)
+        device = 'cuda:0' if torch.cuda.is_available() else "cpu"
+        model = nn.DataParallel(model, device_ids=[0] if torch.cuda.is_available() else None)
+        criterion.to(device)
+        
+        # Load pre-trained weights
+        model_path = os.path.join(sewformer_path, 'assets/ckpts/Detr2d-V6-final-dif-ce-focal-schd-agp_checkpoint_37.pth')
+        if os.path.exists(model_path):
+            print(f"Loading pre-trained weights from {model_path}")
+            checkpoint = torch.load(model_path, map_location=device)
+            model.load_state_dict(checkpoint['model_state_dict'])
+            print("Pre-trained weights loaded successfully")
+        else:
+            print(f"Warning: Pre-trained model not found at {model_path}")
+            print("Using model with random initialization")
+        
+        return model, criterion, device
+    
+    # Load dataset and model using custom loaders
     shape_dataset, _ = custom_load_dataset(
         [],  # Empty data root for inference only
         {'feature_caching': False, 'gt_caching': False},
@@ -117,8 +142,8 @@ def load_model():
         batch_size=1
     )
     
-    # Load model
-    model, _, device = shape_experiment.load_detr_model(shape_dataset.config, others=False)
+    # Load model without pre-trained weights
+    model, _, device = custom_load_model(shape_dataset.config)
     model.eval()
     
     print(f"Model loaded successfully to {device}")
