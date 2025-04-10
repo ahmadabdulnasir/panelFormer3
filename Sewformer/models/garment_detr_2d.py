@@ -353,7 +353,17 @@ class SetCriterionWithOutMatcher(nn.Module):
 
 def build(args):
     num_classes = args["dataset"]["max_pattern_len"]
-    devices = torch.device(args["trainer"]["devices"][0] if isinstance(args["trainer"]["devices"], list) else args["trainer"]["devices"])
+    
+    # Handle the case when no GPU is available
+    try:
+        if torch.cuda.is_available() and "trainer" in args and "devices" in args["trainer"]:
+            devices = torch.device(args["trainer"]["devices"][0] if isinstance(args["trainer"]["devices"], list) else args["trainer"]["devices"])
+        else:
+            devices = torch.device("cpu")
+    except RuntimeError:
+        print("Warning: CUDA device not available, using CPU instead")
+        devices = torch.device("cpu")
+        
     backbone = build_backbone(args)
     panel_transformer = build_transformer(args)
 
