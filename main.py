@@ -81,8 +81,29 @@ def load_model():
     wandb_username = system_info.properties['wandb_username'] if system_info.has('wandb_username') else ''
     shape_experiment = ExperimentWrappper(config, wandb_username)
     
-    # Load dataset and model
-    shape_dataset, _ = shape_experiment.load_detr_dataset(
+    # Override the load_detr_dataset method to fix the dataset loading issue
+    def custom_load_dataset(data_root, eval_config={}, unseen=False, batch_size=5):
+        # Get data configuration from experiment
+        split, _, data_config = shape_experiment.data_info()
+        
+        # Update configuration with evaluation config
+        data_config.update(eval_config)
+        
+        # Get the dataset class
+        import data
+        data_class = getattr(data, data_config['class'])
+        
+        # Create dataset with correct parameters (including sim_root)
+        dataset = data_class(data_root, data_root, data_config, 
+                           gt_caching=eval_config.get('gt_caching', False),
+                           feature_caching=eval_config.get('feature_caching', False))
+        
+        # Create data wrapper
+        datawrapper = data.RealisticDatasetDetrWrapper(dataset, known_split=None, batch_size=batch_size)
+        return dataset, datawrapper
+    
+    # Load dataset and model using custom loader
+    shape_dataset, _ = custom_load_dataset(
         [],  # Empty data root for inference only
         {'feature_caching': False, 'gt_caching': False},
         unseen=True, 
