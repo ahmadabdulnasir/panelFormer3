@@ -89,6 +89,13 @@ def load_model():
         # Update configuration with evaluation config
         data_config.update(eval_config)
         
+        # Fix paths to be absolute
+        if 'panel_classification' in data_config:
+            data_config['panel_classification'] = os.path.join(sewformer_path, 'assets/data_configs/panel_classes_condenced.json')
+        
+        if 'filter_by_params' in data_config:
+            data_config['filter_by_params'] = os.path.join(sewformer_path, 'assets/data_configs/param_filter.json')
+        
         # Get the dataset class
         import data
         data_class = getattr(data, data_config['class'])
