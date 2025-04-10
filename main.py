@@ -74,7 +74,8 @@ def load_model():
         config = yaml.safe_load(f)
     
     # Initialize experiment
-    shape_experiment = ExperimentWrappper(config, system_info.get('wandb_username', ''))
+    wandb_username = system_info.properties['wandb_username'] if system_info.has('wandb_username') else ''
+    shape_experiment = ExperimentWrappper(config, wandb_username)
     
     # Load dataset and model
     shape_dataset, _ = shape_experiment.load_detr_dataset(

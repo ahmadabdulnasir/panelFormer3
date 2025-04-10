@@ -42,3 +42,6 @@ ACM Transactions on Graphics (SIGGRAPH Asia 2023)
 
 
 
+
+
+wget https://huggingface.co/liulj/sewformer/resolve/main/Detr2d-V6-final-dif-ce-focal-schd-agp_checkpoint_37.pth
