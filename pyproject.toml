@@ -1,0 +1,28 @@
+[project]
+name = "techpack"
+version = "0.1.0"
+author = "Ahmad Abdulnasir Shuaib (me@ahmadabdulnasir.com.ng)"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "cairosvg>=2.7.1",
+    "entmax>=1.3",
+    "fastapi>=0.115.12",
+    "matplotlib>=3.10.1",
+    "numba>=0.61.2",
+    "numpy>=2.2.4",
+    "pillow>=11.1.0",
+    "protobuf>=6.30.2",
+    "python-multipart>=0.0.20",
+    "pytz>=2025.2",
+    "pyyaml>=6.0.2",
+    "requests>=2.32.3",
+    "scipy>=1.15.2",
+    "sparsemax>=0.1.9",
+    "svglib>=1.5.1",
+    "svgwrite>=1.4.3",
+    "torch==2.2.0",
+    "torchvision>=0.17.0",
+    "uvicorn>=0.34.0",
+]
