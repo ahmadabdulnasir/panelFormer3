@@ -255,18 +255,40 @@ async def predict(file: UploadFile = File(...)):
                     if sub_file.is_file():
                         shutil.copy(sub_file, target_dir)
         
-        # Get all result files
+        # Get all result files (including those in subdirectories)
         result_files = {}
-        for file_path in Path(static_prediction_dir).glob("*"):
-            file_type = file_path.suffix.lstrip('.')
-            if file_type in ['png', 'jpg', 'jpeg', 'svg']:
-                result_files[file_path.name] = f"/static/{prediction_id}/{file_path.name}"
+        pattern_images = []
         
-        # Return results
+        # First check for files in the main directory
+        for file_path in Path(static_prediction_dir).glob("*"):
+            if file_path.is_file():
+                file_type = file_path.suffix.lstrip('.')
+                if file_type in ['png', 'jpg', 'jpeg', 'svg']:
+                    result_files[file_path.name] = f"/static/{prediction_id}/{file_path.name}"
+                    # Keep track of pattern images specifically
+                    if "pattern" in file_path.name.lower():
+                        pattern_images.append(f"/static/{prediction_id}/{file_path.name}")
+        
+        # Then check subdirectories
+        for subdir in Path(static_prediction_dir).glob("*/"):
+            if subdir.is_dir():
+                for file_path in subdir.glob("*"):
+                    if file_path.is_file():
+                        file_type = file_path.suffix.lstrip('.')
+                        if file_type in ['png', 'jpg', 'jpeg', 'svg']:
+                            relative_path = file_path.relative_to(static_prediction_dir)
+                            result_files[str(relative_path)] = f"/static/{prediction_id}/{relative_path}"
+                            # Keep track of pattern images specifically
+                            if "pattern" in file_path.name.lower():
+                                pattern_images.append(f"/static/{prediction_id}/{relative_path}")
+        
+        # Return results with more detailed information
         return {
             "prediction_id": prediction_id,
             "input_image": f"/static/{prediction_id}/input.jpg",
+            "pattern_images": pattern_images,  # Specifically highlight pattern images
             "results": result_files,
+            "view_url": f"http://{os.environ.get('HOST_NAME', '104.171.203.82')}/static/{prediction_id}/",
             "message": "Prediction completed successfully"
         }
     
