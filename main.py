@@ -299,6 +299,53 @@ async def predict(file: UploadFile = File(...)):
         # Clean up temporary file
         os.unlink(temp_file_path)
 
+@app.get("/prediction/{prediction_id}")
+async def get_prediction(prediction_id: str):
+    """
+    Retrieve prediction image by prediction_id
+    """
+    # Check if the prediction directory exists
+    static_prediction_dir = os.path.join(STATIC_DIR, prediction_id)
+    if not os.path.exists(static_prediction_dir):
+        raise HTTPException(status_code=404, detail=f"Prediction with ID {prediction_id} not found")
+    
+    # Find pattern images
+    pattern_images = []
+    
+    # First check for pattern images in the main directory
+    for file_path in Path(static_prediction_dir).glob("*"):
+        if file_path.is_file() and "pattern" in file_path.name.lower():
+            file_type = file_path.suffix.lstrip('.')
+            if file_type in ['png', 'jpg', 'jpeg']:
+                pattern_images.append(file_path)
+    
+    # Then check subdirectories
+    if not pattern_images:
+        for subdir in Path(static_prediction_dir).glob("*/"):
+            if subdir.is_dir():
+                for file_path in subdir.glob("*"):
+                    if file_path.is_file() and "pattern" in file_path.name.lower():
+                        file_type = file_path.suffix.lstrip('.')
+                        if file_type in ['png', 'jpg', 'jpeg']:
+                            pattern_images.append(file_path)
+    
+    # If no pattern images found, try to find any image
+    if not pattern_images:
+        for file_path in Path(static_prediction_dir).glob("**/*"):
+            if file_path.is_file():
+                file_type = file_path.suffix.lstrip('.')
+                if file_type in ['png', 'jpg', 'jpeg', "svg"]:
+                    pattern_images.append(file_path)
+    
+    # If no images found at all, return an error
+    if not pattern_images:
+        raise HTTPException(status_code=404, detail=f"No images found for prediction ID {prediction_id}")
+    
+    # Return the first pattern image found
+    image_path = pattern_images[0]
+    return FileResponse(image_path)
+
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
