@@ -73,6 +73,10 @@ def load_model():
     with open(config_path, 'r') as f:
         config = yaml.safe_load(f)
     
+    # Add is_training flag to config if not present
+    if 'experiment' in config and 'is_training' not in config['experiment']:
+        config['experiment']['is_training'] = False
+    
     # Initialize experiment
     wandb_username = system_info.properties['wandb_username'] if system_info.has('wandb_username') else ''
     shape_experiment = ExperimentWrappper(config, wandb_username)
