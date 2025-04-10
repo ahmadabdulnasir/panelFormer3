@@ -33,7 +33,7 @@ from experiment import ExperimentWrappper
 
 # Create FastAPI app
 app = FastAPI(
-    title="Sewformer API",
+    title="Fashable.AI Tech Pack API",
     description="API for generating sewing patterns from garment images",
     version="1.0.0"
 )
@@ -62,7 +62,7 @@ device = None
 shape_dataset = None
 
 def load_model():
-    """Load the pre-trained Sewformer model"""
+    """Load the pre-trained tech pack model"""
     global model, device, shape_dataset
     
     # Load system info

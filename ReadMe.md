@@ -1,49 +1,133 @@
-# Sewformer
-This is the official implementation of [Towards Garment Sewing Pattern Reconstruction from a Single Image](https://arxiv.org/abs/2311.04218v1).
+# TechPack: Garment Sewing Pattern Generator API by Fashable.AI
 
-[Lijuan Liu](https://scholar.google.com/citations?user=nANxp5wAAAAJ&hl=en)<sup> *</sup>,
-[Xiangyu Xu](https://xuxy09.github.io/)<sup> *</sup>,
-[Zhijie Lin](https://scholar.google.com/citations?user=xXMj6_EAAAAJ&hl=zh-CN)<sup> *</sup>,
-[Jiabing Liang]()<sup> *</sup>,
-[Shuicheng Yan](https://yanshuicheng.info/)<sup>&dagger;<sup></sup>,  
-ACM Transactions on Graphics (SIGGRAPH Asia 2023)
+A FastAPI-based web service that generates sewing patterns from garment images using the Sewformer model.
 
-### [Project](https://sewformer.github.io/) | [Paper](https://arxiv.org/abs/2311.04218v1)
+## Overview
 
-<img src="SewFactory/assets/representative.jpg">
+TechPack is a production-ready implementation of the Sewformer model, which can generate sewing patterns from a single garment image. The system is deployed as a REST API service that allows users to upload garment images and receive detailed sewing pattern information.
 
----------------------------
+## Features
 
-### Installation and Configuration
-* Clone this repository to `path_to_dev` and `cd path_to_dev/Sewformer`, download the pre-trained [checkpoint](https://huggingface.co/liulj/sewformer) and put it into `assets/ckpts`.
-* The environment can be initialized with `conda env create -f environment.yaml`. Then you can activate the environment `conda activate garment`. 
+- **Single Image Processing**: Generate complete sewing patterns from a single garment image
+- **REST API Interface**: Easy integration with web and mobile applications
+- **GPU Acceleration**: Utilizes GPU for faster inference (with CPU fallback)
+- **Visualization**: Provides visual outputs of the generated sewing patterns
+- **Production-Ready**: Includes deployment configurations for production environments
 
-### Training
-* Download our provided [dataset](https://huggingface.co/datasets/liulj/sewfactory) and put it into `path_to_sewfactory`, update the local paths in `system.json` to make sure the dataset setup correctly. 
-* Train the model with
-`torchrun --standalone --nnodes=1 --nproc_per_node=1 train.py -c configs/train.yaml`
+## System Requirements
 
-  The output will be located at the `output` in `system.json`.
+- Python 3.8+
+- CUDA-compatible GPU (recommended, but not required)
+- 8GB+ RAM
+- 2GB+ disk space
 
-### Testing
+## Installation
 
-1. Inference sewing patterns with the pretrained model: 
+### 1. Clone the Repository
 
-* evaluate on sewfactory dataset: `torchrun --standalone --nnodes=1 --nproc_per_node=1 train.py -c configs/train.yaml -t`
+```bash
+git clone https://github.com/yourusername/techPack.git
+cd techPack
+```
 
-* inference on real images (e.g. from deepfashion):
-    `python inference.py -c configs/test.yaml -d assets/data/deepfashion -t deepfashion -o outputs/deepfashion` 
+### 2. Set Up Python Environment
 
-2. Simulate the predicted results (Windows):
-`cd path_to_dev/SewFactory` and run `path_to_maya\bin\mayapy.exe .\data_generator\deepfashion_sim.py` to simulate the predicted sew patterns. (Please prepare the SMPL prediction results with [RSC-Net](https://github.com/xuxy09/RSC-Net) and update the predicted data root specified in `deepfashion_sim.py`.)
+Using venv (recommended):
 
-    See more details about the SewFactory dataset and the simulation [here](./SewFactory/ReadMe.md).
+```bash
+python -m venv .venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+```
 
+### 3. Download Pre-trained Model
 
+```bash
+mkdir -p Sewformer/assets/ckpts
+wget https://huggingface.co/liulj/sewformer/resolve/main/Detr2d-V6-final-dif-ce-focal-schd-agp_checkpoint_37.pth -O Sewformer/assets/ckpts/Detr2d-V6-final-dif-ce-focal-schd-agp_checkpoint_37.pth
+```
 
+## Usage
 
+### Starting the API Server
 
+```bash
+uvicorn main:app --host 0.0.0.0 --port 8000
+```
 
-wget https://huggingface.co/liulj/sewformer/resolve/main/Detr2d-V6-final-dif-ce-focal-schd-agp_checkpoint_37.pth
+The API will be available at `http://localhost:8000`. You can access the interactive API documentation at `http://localhost:8000/docs`.
 
-pip install torch torchvision --index-url https://download.pytorch.org/whl/cu118
+### API Endpoints
+
+- `GET /`: Root endpoint, returns a welcome message
+- `POST /predict/`: Upload a garment image to generate a sewing pattern
+- `GET /prediction/{prediction_id}`: Retrieve a previously generated prediction
+
+### Example Usage
+
+Using curl:
+
+```bash
+curl -X POST -F "file=@path/to/your/garment_image.jpg" http://localhost:8000/predict/
+```
+
+Using Python requests:
+
+```python
+import requests
+
+url = "http://localhost:8000/predict/"
+files = {"file": open("path/to/your/garment_image.jpg", "rb")}
+response = requests.post(url, files=files)
+print(response.json())
+```
+
+## Deployment
+
+### Systemd Service (Linux)
+
+A systemd service configuration is provided in the `deployment` directory. To deploy as a service:
+
+1. Copy the service file to systemd directory:
+   ```bash
+   sudo cp deployment/techPack.start.uvicorn.service /etc/systemd/system/
+   ```
+
+2. Create a startup script:
+   ```bash
+   echo '#!/bin/bash
+   cd /path/to/techPack
+   source .venv/bin/activate
+   uvicorn main:app --host 0.0.0.0 --port 8000' > start.techPack.sh
+   chmod +x start.techPack.sh
+   ```
+
+3. Enable and start the service:
+   ```bash
+   sudo systemctl enable techPack.start.uvicorn.service
+   sudo systemctl start techPack.start.uvicorn.service
+   ```
+
+## Project Structure
+
+```
+techPack/
+├── Sewformer/           # Core Sewformer model implementation
+├── SewFactory/          # Simulation and data generation tools
+├── deployment/          # Deployment configuration files
+├── static/              # Static files for serving results
+├── outputs/             # Generated output files
+├── main.py              # FastAPI application entry point
+├── requirements.txt     # Python dependencies
+└── ReadMe.md            # This documentation
+```
+
+## Troubleshooting
+
+### Common Issues
+
+1. **GPU not detected**: The application will automatically fall back to CPU if no GPU is detected. To force CPU usage, set the environment variable `CUDA_VISIBLE_DEVICES=""`.
+
+2. **Model loading errors**: Ensure the model checkpoint is correctly downloaded to `Sewformer/assets/ckpts/`.
+
+3. **Memory errors**: If you encounter memory issues on GPU, try reducing the batch size in the configuration.
