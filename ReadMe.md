@@ -41,15 +41,4 @@ ACM Transactions on Graphics (SIGGRAPH Asia 2023)
 
 
 
-### BibTex
-Please cite this paper if you find the code/model helpful in your research:
-```
- @article{liu2023sewformer,
-    author      = {Liu, Lijuan and Xu, Xiangyu and Lin, Zhijie and Liang, Jiabin and Yan, Shuicheng},
-    title       = {Towards Garment Sewing Pattern Reconstruction from a Single Image},
-    journal     = {ACM Transactions on Graphics (SIGGRAPH Asia)},
-    year        = {2023}
-  }
-```
-
 

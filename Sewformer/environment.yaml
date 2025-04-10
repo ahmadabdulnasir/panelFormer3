@@ -1,4 +1,4 @@
-name: garment
+name: techpack
 channels:
   - conda-forge
   - defaults
