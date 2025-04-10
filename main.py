@@ -286,10 +286,10 @@ async def predict(file: UploadFile = File(...)):
         return {
             "prediction_id": prediction_id,
             "input_image": f"/static/{prediction_id}/input.jpg",
-            "pattern_images": pattern_images,  # Specifically highlight pattern images
-            "results": result_files,
-            "view_url": f"http://{os.environ.get('HOST_NAME', '104.171.203.82')}/static/{prediction_id}/",
-            "message": "Prediction completed successfully"
+            "pattern_images": pattern_images,
+            # "results": result_files,
+            "view_url": f"http://{os.environ.get('HOST_NAME', '104.171.203.82')}/prediction/{prediction_id}/",
+            "detail": "Prediction completed successfully"
         }
     
     except Exception as e:
