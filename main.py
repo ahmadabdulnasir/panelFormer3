@@ -245,7 +245,15 @@ async def predict(file: UploadFile = File(...)):
         
         # Copy all files from prediction_dir to static_prediction_dir
         for file_path in Path(prediction_dir).glob("*"):
-            shutil.copy(file_path, static_prediction_dir)
+            if file_path.is_file():
+                shutil.copy(file_path, static_prediction_dir)
+            elif file_path.is_dir():
+                # If it's a directory, copy its contents recursively
+                target_dir = os.path.join(static_prediction_dir, file_path.name)
+                os.makedirs(target_dir, exist_ok=True)
+                for sub_file in file_path.glob("*"):
+                    if sub_file.is_file():
+                        shutil.copy(sub_file, target_dir)
         
         # Get all result files
         result_files = {}
