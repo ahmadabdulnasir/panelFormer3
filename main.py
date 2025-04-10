@@ -125,9 +125,23 @@ def load_model():
         model_path = os.path.join(sewformer_path, 'assets/ckpts/Detr2d-V6-final-dif-ce-focal-schd-agp_checkpoint_37.pth')
         if os.path.exists(model_path):
             print(f"Loading pre-trained weights from {model_path}")
-            checkpoint = torch.load(model_path, map_location=device)
-            model.load_state_dict(checkpoint['model_state_dict'])
-            print("Pre-trained weights loaded successfully")
+            try:
+                # First try with weights_only=False to handle the optimizer state
+                checkpoint = torch.load(model_path, map_location=device, weights_only=False)
+                model.load_state_dict(checkpoint['model_state_dict'])
+                print("Pre-trained weights loaded successfully")
+            except Exception as e:
+                print(f"Error loading model with weights_only=False: {e}")
+                try:
+                    # Try with safe_globals context manager
+                    from torch.serialization import safe_globals
+                    with safe_globals(['torch.optim.lr_scheduler.CosineAnnealingLR']):
+                        checkpoint = torch.load(model_path, map_location=device)
+                        model.load_state_dict(checkpoint['model_state_dict'])
+                        print("Pre-trained weights loaded successfully using safe_globals")
+                except Exception as e2:
+                    print(f"Error loading model with safe_globals: {e2}")
+                    print("Initializing model with random weights")
         else:
             print(f"Warning: Pre-trained model not found at {model_path}")
             print("Using model with random initialization")
