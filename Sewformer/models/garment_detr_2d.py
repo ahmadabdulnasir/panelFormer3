@@ -354,15 +354,33 @@ class SetCriterionWithOutMatcher(nn.Module):
 def build(args):
     num_classes = args["dataset"]["max_pattern_len"]
     
+    # Print GPU information for debugging
+    print(f"CUDA available: {torch.cuda.is_available()}")
+    if torch.cuda.is_available():
+        print(f"Number of GPUs: {torch.cuda.device_count()}")
+        print(f"Current device: {torch.cuda.current_device()}")
+        print(f"Device name: {torch.cuda.get_device_name(0)}")
+    
     # Handle the case when no GPU is available
     try:
-        if torch.cuda.is_available() and "trainer" in args and "devices" in args["trainer"]:
-            devices = torch.device(args["trainer"]["devices"][0] if isinstance(args["trainer"]["devices"], list) else args["trainer"]["devices"])
+        if torch.cuda.is_available():
+            if "trainer" in args and "devices" in args["trainer"]:
+                device_id = args["trainer"]["devices"][0] if isinstance(args["trainer"]["devices"], list) else args["trainer"]["devices"]
+                # Make sure device_id is an integer if it's a string like 'cuda:0'
+                if isinstance(device_id, str) and ':' in device_id:
+                    device_id = int(device_id.split(':')[1])
+                devices = torch.device(f"cuda:{device_id}")
+                print(f"Using GPU device: {devices}")
+            else:
+                devices = torch.device("cuda:0")
+                print("Using default GPU (cuda:0)")
         else:
             devices = torch.device("cpu")
-    except RuntimeError:
-        print("Warning: CUDA device not available, using CPU instead")
+            print("CUDA not available, using CPU")
+    except RuntimeError as e:
+        print(f"Warning: Error setting up CUDA device: {e}")
         devices = torch.device("cpu")
+        print("Falling back to CPU")
         
     backbone = build_backbone(args)
     panel_transformer = build_transformer(args)
