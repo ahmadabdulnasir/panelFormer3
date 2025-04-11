@@ -1,10 +1,10 @@
 # TechPack: Garment Sewing Pattern Generator API by Fashable.AI
 
-A FastAPI-based web service that generates sewing patterns from garment images using the Sewformer model.
+A FastAPI-based web service that generates sewing patterns from garment images using the former model.
 
 ## Overview
 
-TechPack is a production-ready implementation of the Sewformer model, which can generate sewing patterns from a single garment image. The system is deployed as a REST API service that allows users to upload garment images and receive detailed sewing pattern information.
+TechPack is a production-ready implementation of the former model, which can generate sewing patterns from a single garment image. The system is deployed as a REST API service that allows users to upload garment images and receive detailed sewing pattern information.
 
 ## Features
 
@@ -43,8 +43,8 @@ pip install -r requirements.txt
 ### 3. Download Pre-trained Model
 
 ```bash
-mkdir -p Sewformer/assets/ckpts
-wget https://huggingface.co/liulj/sewformer/resolve/main/Detr2d-V6-final-dif-ce-focal-schd-agp_checkpoint_37.pth -O Sewformer/assets/ckpts/Detr2d-V6-final-dif-ce-focal-schd-agp_checkpoint_37.pth
+mkdir -p former/assets/ckpts
+wget https://huggingface.co/liulj/sewformer/resolve/main/Detr2d-V6-final-dif-ce-focal-schd-agp_checkpoint_37.pth -O former/assets/ckpts/Detr2d-V6-final-dif-ce-focal-schd-agp_checkpoint_37.pth
 ```
 
 ## Usage
@@ -112,8 +112,8 @@ A systemd service configuration is provided in the `deployment` directory. To de
 
 ```
 techPack/
-├── Sewformer/           # Core Sewformer model implementation
-├── SewFactory/          # Simulation and data generation tools
+├── former/           # Core former model implementation
+├── Factory/          # Simulation and data generation tools
 ├── deployment/          # Deployment configuration files
 ├── static/              # Static files for serving results
 ├── outputs/             # Generated output files
@@ -128,6 +128,6 @@ techPack/
 
 1. **GPU not detected**: The application will automatically fall back to CPU if no GPU is detected. To force CPU usage, set the environment variable `CUDA_VISIBLE_DEVICES=""`.
 
-2. **Model loading errors**: Ensure the model checkpoint is correctly downloaded to `Sewformer/assets/ckpts/`.
+2. **Model loading errors**: Ensure the model checkpoint is correctly downloaded to `former/assets/ckpts/`.
 
 3. **Memory errors**: If you encounter memory issues on GPU, try reducing the batch size in the configuration.

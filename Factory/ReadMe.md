@@ -1,4 +1,4 @@
-## How to Generate SewFactory Dataset
+## How to Generate Factory Dataset
 
 ### Installation (Windows, GPU Enabled)
 1. Maya python environment:
@@ -13,7 +13,7 @@
 
 ### Configuration
 
-1. `cd path_to_dev/SewFactory` and add `path_to_dev/SewFactory/packages` to `PYTHONPATH` on your system for correct importing of our custom modules.
+1. `cd path_to_dev/Factory` and add `path_to_dev/Factory/packages` to `PYTHONPATH` on your system for correct importing of our custom modules.
 
 2. Download [SMPLH Fbx model (SMPLH_female_010_207.fbx)](https://smpl.is.tue.mpg.de/) to `meta_infos\\fbx_metas`.
 3. (Optional) Prepare human skin textures to `examples\\skin_textures` (for example,  [SURREAL](lsh.paris.inria.fr/SURREAL/smpl_data/textures.tar.gz)).

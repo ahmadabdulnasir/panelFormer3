@@ -19,7 +19,7 @@ currentdir = os.path.dirname(os.path.realpath(__file__))
 parentdir = os.path.dirname(currentdir)
 sys.path.insert(0, parentdir) 
 root_path = os.path.dirname(os.path.dirname(os.path.abspath(parentdir)))
-pkg_path = "{}/SewFactory/packages".format(root_path)
+pkg_path = "{}/Factory/packages".format(root_path)
 print(pkg_path)
 sys.path.insert(0, pkg_path)
 

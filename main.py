@@ -16,16 +16,16 @@ from fastapi.responses import FileResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
-# Add Sewformer to path
+# Add former to path
 root_path = os.path.dirname(os.path.abspath(__file__))
-sewformer_path = os.path.join(root_path, "Sewformer")
+sewformer_path = os.path.join(root_path, "former")
 sys.path.append(sewformer_path)
 
-# Add SewFactory packages to path
-pkg_path = os.path.join(root_path, "SewFactory", "packages")
+# Add Factory packages to path
+pkg_path = os.path.join(root_path, "Factory", "packages")
 sys.path.append(pkg_path)
 
-# Import Sewformer modules
+# Import former modules
 import customconfig
 import data
 import models
@@ -190,7 +190,7 @@ async def startup_event():
 @app.get("/")
 async def root():
     """Root endpoint"""
-    return {"message": "Welcome to Sewformer API. Use /docs to see the API documentation."}
+    return {"message": "Welcome to former API. Use /docs to see the API documentation."}
 
 @app.post("/predict/")
 async def predict(file: UploadFile = File(...)):

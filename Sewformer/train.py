@@ -16,7 +16,7 @@ from pprint import pprint
 # My modules
 import sys, os
 root_path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-pkg_path = "{}/SewFactory/packages".format(root_path)
+pkg_path = "{}/Factory/packages".format(root_path)
 sys.path.insert(0, pkg_path) 
 print(pkg_path)
 

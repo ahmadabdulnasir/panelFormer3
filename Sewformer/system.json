@@ -1,6 +1,6 @@
 {
   "output": "outputs",
-  "datasets_path": "SewFactory",
+  "datasets_path": "Factory",
   "sim_root": "outputs",
   "wandb_username": ""
 }
