@@ -47,6 +47,14 @@ mkdir -p former/assets/ckpts
 wget https://huggingface.co/liulj/sewformer/resolve/main/Detr2d-V6-final-dif-ce-focal-schd-agp_checkpoint_37.pth -O former/assets/ckpts/Detr2d-V6-final-dif-ce-focal-schd-agp_checkpoint_37.pth
 ```
 
+### 4. GPU Support
+If the system have GPU, install torch with cuda support (Make sure the environment is activated conda or venv)
+```bash
+pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118 --upgrade
+pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121 --upgrade
+```
+
+
 ## Usage
 
 ### Starting the API Server

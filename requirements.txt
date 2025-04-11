@@ -1,7 +1,7 @@
 fastapi
 uvicorn
 python-multipart
-torch==2.2.0
+torch
 torchvision
 numpy
 Pillow
@@ -16,3 +16,4 @@ entmax
 numba
 pytz
 cairosvg
+scikit-learn
