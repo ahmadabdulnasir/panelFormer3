@@ -28,8 +28,8 @@ dataset:
   img_size: 1024
   augment: true
 
-  panel_classification: ./assets/data_configs/panel_classes_condenced.json 
-  filter_by_params: ./assets/data_configs/param_filter.json
+  panel_classification: ../former/assets/data_configs/panel_classes_condenced.json 
+  filter_by_params: ../former/assets/data_configs/param_filter.json
   
 
   standardize:

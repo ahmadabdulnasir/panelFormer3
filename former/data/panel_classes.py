@@ -11,9 +11,34 @@ class PanelClasses():
 
         self.filename = classes_file
 
-        with open(classes_file, 'r') as f:
-            # preserve the order of classes names
-            self.classes = json.load(f, object_pairs_hook=OrderedDict)
+        # Handle relative paths by checking if the path is relative to the script directory
+        import os
+        if classes_file.startswith('./') or not os.path.isabs(classes_file):
+            # Try to find the file relative to the script directory
+            script_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            abs_path = os.path.join(script_dir, classes_file.lstrip('./'))
+            
+            if os.path.exists(abs_path):
+                classes_file = abs_path
+            else:
+                # Try another approach - use the current working directory
+                cwd_path = os.path.join(os.getcwd(), classes_file.lstrip('./'))
+                if os.path.exists(cwd_path):
+                    classes_file = cwd_path
+                else:
+                    # Try with the former directory as base
+                    former_path = os.path.join(os.getcwd(), 'former', classes_file.lstrip('./'))
+                    if os.path.exists(former_path):
+                        classes_file = former_path
+            
+        print(f"Loading panel classes from: {classes_file}")
+        
+        try:
+            with open(classes_file, 'r') as f:
+                # preserve the order of classes names
+                self.classes = json.load(f, object_pairs_hook=OrderedDict)
+        except FileNotFoundError as e:
+            raise FileNotFoundError(f"Could not find panel classes file at {classes_file}. Original error: {e}")
 
         self.names = list(self.classes.keys())
         
