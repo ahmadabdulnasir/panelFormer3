@@ -19,7 +19,7 @@ TechPack is a production-ready implementation of the former model, which can gen
 - Python 3.8+
 - CUDA-compatible GPU (recommended, but not required)
 - 8GB+ RAM
-- 2GB+ disk space
+- 200GB+ disk space
 
 ## Installation
 
@@ -40,6 +40,18 @@ source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
+Or Better use UV 
+```bash
+uv sync
+```
+Install uv
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+```bash
+powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+```
+
 ### 3. Download Pre-trained Model
 
 ```bash
@@ -51,7 +63,6 @@ wget https://huggingface.co/liulj/sewformer/resolve/main/Detr2d-V6-final-dif-ce-
 If the system have GPU, install torch with cuda support (Make sure the environment is activated conda or venv)
 ```bash
 pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118 --upgrade
-pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121 --upgrade
 ```
 
 

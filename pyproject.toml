@@ -18,6 +18,7 @@ dependencies = [
     "pytz>=2025.2",
     "pyyaml>=6.0.2",
     "requests>=2.32.3",
+    "scikit-learn>=1.6.1",
     "scipy>=1.15.2",
     "sparsemax>=0.1.9",
     "svglib>=1.5.1",
