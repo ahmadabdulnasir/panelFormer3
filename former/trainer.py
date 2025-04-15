@@ -536,8 +536,13 @@ class TrainerDetr(Trainer):
                 # prediction for visual reference
                 if self.log_with_visualization:
                     self.datawraper.dataset.set_training(False)
-                    valid_batch = iter(valid_loader).__next__()
-                    self._log_batch_image(model, valid_batch, epoch, log_step, tag="valid", return_stitches=return_stitches)
+                    # Check if validation loader has any data
+                    valid_iter = iter(valid_loader)
+                    try:
+                        valid_batch = next(valid_iter)
+                        self._log_batch_image(model, valid_batch, epoch, log_step, tag="valid", return_stitches=return_stitches)
+                    except StopIteration:
+                        print("TrainerDetr::Warning::No validation batch available for visualization.")
                  
     def _log_batch_image(self, model, batch_sample, epoch, log_step, tag="valid", return_stitches=False):
         with torch.no_grad():
