@@ -357,6 +357,12 @@ class TrainerDetr(Trainer):
         print('TrainerDetr::Using AdamW optimizer')
     
     def _add_scheduler(self, steps_per_epoch):
+        # Handle the case when there are no training samples
+        if steps_per_epoch <= 0:
+            print('TrainerDetr::Warning::No training samples available. Using a constant learning rate.')
+            self.scheduler = None
+            return
+            
         if 'lr_scheduling' in self.setup and self.setup["lr_scheduling"] == "OneCycleLR":
             self.scheduler = torch.optim.lr_scheduler.OneCycleLR(
                 self.optimizer, 
@@ -366,12 +372,14 @@ class TrainerDetr(Trainer):
                 cycle_momentum=False  # to work with Adam
             )
         elif 'lr_scheduling' in self.setup and self.setup["lr_scheduling"] == "warm_cosine":
-
+            # Ensure steps_per_epoch is at least 1 to avoid division by zero
+            effective_steps = max(1, steps_per_epoch)
+            
             consine_scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(self.optimizer, 
-                                                                           T_max=self.setup["epochs"] * steps_per_epoch, 
+                                                                           T_max=self.setup["epochs"] * effective_steps, 
                                                                            eta_min=0, 
                                                                            last_epoch=-1)
-            self.scheduler = GradualWarmupScheduler(self.optimizer, multiplier=8, total_epoch=5 * steps_per_epoch, after_scheduler=consine_scheduler)
+            self.scheduler = GradualWarmupScheduler(self.optimizer, multiplier=8, total_epoch=5 * effective_steps, after_scheduler=consine_scheduler)
 
         else:
             self.scheduler = None 
