@@ -510,8 +510,14 @@ class TrainerDetr(Trainer):
                     if (self.setup["multiprocess"] and self.device == 0) or not self.setup["multiprocess"]:
                         if self.setup["dry_run"]:
                             break
-                valid_loss = sum(valid_losses) / len(valid_losses)  # Each loss element is already a mean for its batch
-                valid_loss_dict = {key: sum(val)/len(val) if len(val) > 0 else None for key, val in valid_loss_dict.items()}
+                # Handle the case when there are no validation samples
+                if len(valid_losses) > 0:
+                    valid_loss = sum(valid_losses) / len(valid_losses)  # Each loss element is already a mean for its batch
+                    valid_loss_dict = {key: sum(val)/len(val) if len(val) > 0 else None for key, val in valid_loss_dict.items()}
+                else:
+                    print("TrainerDetr::Warning::No validation samples available. Using a default validation loss.")
+                    valid_loss = torch.tensor(float('inf'))  # Use infinity as the default validation loss
+                    valid_loss_dict = {key: None for key in valid_loss_dict}
 
             # Checkpoints: & compare with previous best
             if (self.setup["multiprocess"] and self.device == 0) or not self.setup["multiprocess"]:
