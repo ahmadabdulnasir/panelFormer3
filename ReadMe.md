@@ -66,6 +66,17 @@ pip install torch torchvision torchaudio --index-url https://download.pytorch.or
 ```
 
 
+/Users/ahmadabdulnasirshuaib/wsp/labs/techPack/Factory/
+├── assets/
+├── data_generator/
+├── meta_infos/
+├── packages/
+├── sewformer_dataset/  <-- Your new dataset folder
+│   ├── renders/        <-- Put garment images here
+│   └── static/         <-- Put ground truth data here
+├── .gitignore
+└── ReadMe.md
+
 ## Usage
 
 ### Starting the API Server

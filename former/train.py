@@ -15,11 +15,15 @@ from pprint import pprint
 
 # My modules
 import sys, os
-root_path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-pkg_path = "{}/Factory/packages".format(root_path)
-sys.path.insert(0, pkg_path) 
-print(pkg_path)
+root_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+pkg_path = os.path.join(root_path, "Factory/packages")
+sys.path.insert(0, pkg_path)
+print(f"Adding to Python path: {pkg_path}")
 
+# Also add the parent directory to the path to find other modules
+parent_dir = os.path.dirname(root_path)
+sys.path.insert(0, parent_dir)
+print(f"Adding to Python path: {parent_dir}")
 
 import customconfig
 import data
