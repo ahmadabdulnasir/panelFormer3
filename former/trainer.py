@@ -119,6 +119,13 @@ class Trainer():
                 log_step += 1
                 loss_dict.update({'epoch': epoch, 'batch': i, 'loss': loss, 'learning_rate': self.optimizer.param_groups[0]['lr']})
                 wb.log(loss_dict, step=log_step)
+                
+                # Step-based checkpointing if configured
+                if hasattr(wb.config.experiment, 'save_checkpoint_steps') and \
+                   wb.config.experiment.save_checkpoint_steps > 0 and \
+                   log_step % wb.config.experiment.save_checkpoint_steps == 0:
+                    print(f'Saving step-based checkpoint at step {log_step}')
+                    self._save_checkpoint(model, epoch, step=log_step, best=False)
 
             # Check the cluster assignment history
             if hasattr(model.module.loss, 'cluster_resolution_mapping') and model.module.loss.debug_prints:
@@ -299,8 +306,15 @@ class Trainer():
                         print(e)
                         pass
 
-    def _save_checkpoint(self, model, epoch, best=False):
-        """Save checkpoint that can be used to resume training"""
+    def _save_checkpoint(self, model, epoch, step=None, best=False):
+        """Save checkpoint that can be used to resume training
+        
+        Args:
+            model: The model to save
+            epoch: Current epoch number
+            step: Current step number (optional)
+            best: Whether this is the best model so far
+        """
         
         # https://pytorch.org/tutorials/beginner/saving_loading_models.html#saving-loading-a-general-checkpoint-for-inference-and-or-resuming-training
         checkpoint_dict = {
@@ -308,6 +322,10 @@ class Trainer():
             'model_state_dict': model.state_dict(),
             'optimizer_state_dict': self.optimizer.state_dict()
         }
+        
+        # Include step information if provided
+        if step is not None:
+            checkpoint_dict['step'] = step
         if self.scheduler is not None:
             checkpoint_dict['scheduler_state_dict'] = self.scheduler.state_dict()
 

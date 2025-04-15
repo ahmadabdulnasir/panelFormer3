@@ -7,8 +7,10 @@ experiment:
   project_name: Pattern-Recovery
   run_name: Training
   run_id: 
-  local_dir: 
+  local_dir: outputs/checkpoints
   is_training: True
+  save_checkpoint_steps: 100  # Save a checkpoint every 100 steps
+  save_checkpoint_epochs: 1   # Save a checkpoint every epoch (default behavior)
 
 # ----- Dataset-related properties -----
 dataset: 
