@@ -52,7 +52,11 @@ if __name__ == '__main__':
     from pprint import pprint 
     np.set_printoptions(precision=4, suppress=True)
     config, args = get_values_from_args()
-    system_info = customconfig.Properties('./system.json')
+    # Use absolute path to system.json
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    system_json_path = os.path.join(script_dir, 'system.json')
+    print(f"Loading system.json from: {system_json_path}")
+    system_info = customconfig.Properties(system_json_path)
 
     # DDP
     dist.init_process_group(backend='nccl')
