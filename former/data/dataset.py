@@ -170,9 +170,38 @@ class GarmentDetrDataset(Dataset):
         experiment.add_config('dataset', self.config)
         # panel classes
         if self.panel_classifier is not None:
-            shutil.copy(
-                self.panel_classifier.filename, 
-                experiment.local_wandb_path() / ('panel_classes.json'))
+            # Handle the case where the panel_classifier filename is a relative path
+            import os
+            panel_file = self.panel_classifier.filename
+            
+            # Check if the file exists directly
+            if os.path.exists(panel_file):
+                src_path = panel_file
+            else:
+                # Try different paths to find the file
+                possible_paths = [
+                    # Absolute path from script directory
+                    os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), panel_file.lstrip('./')),
+                    # From current working directory
+                    os.path.join(os.getcwd(), panel_file.lstrip('./')),
+                    # From project root
+                    os.path.join(os.getcwd(), 'former', panel_file.lstrip('./')),
+                    # Direct path in former/assets
+                    os.path.join(os.getcwd(), 'former/assets/data_configs/panel_classes_condenced.json')
+                ]
+                
+                src_path = None
+                for path in possible_paths:
+                    if os.path.exists(path):
+                        src_path = path
+                        break
+                
+                if src_path is None:
+                    print(f"Warning: Could not find panel classes file at {panel_file}. Skipping copy to wandb.")
+                    return
+            
+            print(f"Copying panel classes from: {src_path} to wandb")
+            shutil.copy(src_path, experiment.local_wandb_path() / ('panel_classes.json'))
     
     def set_training(self, is_train=True):
         self.is_train = is_train
