@@ -333,9 +333,23 @@ class GarmentDetrDataset(Dataset):
             # valid_per_type & test_per_type used on folder
             data_len = len(self.dataset_start_ids) - 1
             permute = (torch.randperm(data_len)).tolist()
-            valid_size = int(data_len * valid_per_type / 100) if split_type == 'percent' else valid_per_type
-            test_size = int(data_len * test_per_type / 100) if split_type == 'percent' else test_per_type
+            
+            # Calculate sizes but ensure at least 1 folder for validation if there are enough folders
+            valid_size = max(1, int(data_len * valid_per_type / 100)) if split_type == 'percent' else valid_per_type
+            test_size = max(1, int(data_len * test_per_type / 100)) if split_type == 'percent' else test_per_type
+            
+            # Adjust sizes to ensure we don't exceed the total number of folders
+            total_needed = valid_size + test_size
+            if total_needed > data_len:
+                # Scale down proportionally if we have too few folders
+                scale_factor = data_len / total_needed
+                valid_size = max(1, int(valid_size * scale_factor))
+                test_size = max(0, data_len - valid_size)  # Test can be 0, validation must be at least 1
+            
             train_size = data_len - valid_size - test_size
+            
+            print(f"Folder split: Total={data_len}, Train={train_size}, Valid={valid_size}, Test={test_size}")
+            
             train_folders, valid_folders = permute[:train_size], permute[train_size:train_size + valid_size]
             if test_size:
                 test_folders = permute[train_size + valid_size:train_size + valid_size + test_size]

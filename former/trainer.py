@@ -395,9 +395,29 @@ class TrainerDetr(Trainer):
         else:
             self.datawraper = data.RealisticDatasetDetrWrapper(dataset)
         
+        # Print total dataset size before split
+        print(f"Total dataset size before split: {len(dataset)}")
+        
         # self.datawraper = data.RealisticDatasetDetrWrapper(dataset)
         self.datawraper.load_split(split_info)
+        
+        # Print detailed information about the splits
+        print(f"Dataset split details:")
+        print(f"  Training samples: {len(self.datawraper.training) if self.datawraper.training else 0}")
+        print(f"  Validation samples: {len(self.datawraper.validation) if self.datawraper.validation else 0}")
+        print(f"  Test samples: {len(self.datawraper.test) if self.datawraper.test else 0}")
+        
+        # Print folder information
+        print(f"Dataset folders: {[folder for folder, _ in dataset.dataset_start_ids[:-1]]}")
+        print(f"Number of folders: {len(dataset.dataset_start_ids) - 1}")
+        
         self.datawraper.new_loaders(self.setup['batch_size'], shuffle_train=True, multiprocess=self.setup["multiprocess"])
+        
+        # Print loader information
+        print(f"Loader information:")
+        print(f"  Training batches: {len(self.datawraper.loaders.train) if self.datawraper.loaders.train else 0}")
+        print(f"  Validation batches: {len(self.datawraper.loaders.validation) if self.datawraper.loaders.validation else 0}")
+        print(f"  Test batches: {len(self.datawraper.loaders.test) if self.datawraper.loaders.test else 0}")
 
         if self.standardize_data:
             self.datawraper.standardize_data()
