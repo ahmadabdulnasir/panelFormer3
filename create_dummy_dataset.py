@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """
+Sewformer Dummy Dataset Generator
 Script to create a dummy dataset for testing the Sewformer model training.
 This creates a minimal dataset structure with sample garment data.
 """
@@ -14,8 +15,10 @@ def create_dummy_dataset(base_dir, num_samples=5):
     """Create a dummy dataset with the specified number of samples."""
     dataset_dir = os.path.join(base_dir, "Factory", "sewformer_dataset")
     
-    # Create the main dataset directory
+    # Create the main dataset directory and other required directories
     os.makedirs(dataset_dir, exist_ok=True)
+    os.makedirs(os.path.join(base_dir, "data_configs"), exist_ok=True)
+    os.makedirs(os.path.join(base_dir, "outputs", "checkpoints"), exist_ok=True)
     
     # Create sample garments
     for i in range(num_samples):
@@ -76,9 +79,31 @@ def create_dummy_dataset(base_dir, num_samples=5):
     
     print(f"Created dummy dataset with {num_samples} samples at {dataset_dir}")
 
+def create_dummy_data_split(base_dir):
+    """Create a dummy data split file"""
+    data_split_path = os.path.join(base_dir, "data_configs", "data_split.json")
+    
+    # Create a simple data split structure
+    data_split = {
+        "training": ["sample_garment_0", "sample_garment_1", "sample_garment_2"],
+        "validation": ["sample_garment_3"],
+        "test": ["sample_garment_4"]
+    }
+    
+    with open(data_split_path, 'w') as f:
+        json.dump(data_split, f, indent=2)
+    
+    print(f"Created dummy data split at {data_split_path}")
+
 if __name__ == "__main__":
     # Get the directory of this script
     script_dir = os.path.dirname(os.path.abspath(__file__))
     
     # Create the dummy dataset
     create_dummy_dataset(script_dir, num_samples=5)
+    
+    # Create a dummy data split file
+    create_dummy_data_split(script_dir)
+    
+    print("\nDummy dataset creation complete!")
+    print("You can now run training with: ./train.sh")

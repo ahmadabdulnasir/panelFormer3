@@ -10,8 +10,10 @@ cd "$SCRIPT_DIR"
 # Set PYTHONPATH to include necessary directories
 export PYTHONPATH=$PYTHONPATH:$(pwd):$(pwd)/Factory/packages
 
-# Create assets directory if it doesn't exist
+# Create all necessary directories
 mkdir -p "$(pwd)/former/assets/data_configs"
+mkdir -p "$(pwd)/data_configs"
+mkdir -p "$(pwd)/outputs/checkpoints"
 
 # Copy configuration files if they don't exist in the target location
 if [ ! -f "$(pwd)/former/assets/data_configs/panel_classes_condenced.json" ]; then
