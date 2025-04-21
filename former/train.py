@@ -50,6 +50,11 @@ def get_values_from_args():
 
 if __name__ == '__main__':
     from pprint import pprint 
+    import gc
+    # Clear CUDA cache before processing
+    if torch.cuda.is_available():
+        torch.cuda.empty_cache()
+        gc.collect()
     np.set_printoptions(precision=4, suppress=True)
     config, args = get_values_from_args()
     # Use absolute path to system.json

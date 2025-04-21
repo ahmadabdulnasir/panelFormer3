@@ -408,7 +408,7 @@ class TrainerDetr(Trainer):
         print(f"  Test samples: {len(self.datawraper.test) if self.datawraper.test else 0}")
         
         # Print folder information
-        print(f"Dataset folders: {[folder for folder, _ in dataset.dataset_start_ids[:-1]]}")
+        # print(f"Dataset folders: {[folder for folder, _ in dataset.dataset_start_ids[:-1]]}")
         print(f"Number of folders: {len(dataset.dataset_start_ids) - 1}")
         
         self.datawraper.new_loaders(self.setup['batch_size'], shuffle_train=True, multiprocess=self.setup["multiprocess"])
