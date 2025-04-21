@@ -53,6 +53,7 @@ if __name__ == '__main__':
     import gc
     # Clear CUDA cache before processing
     if torch.cuda.is_available():
+        pprint(f"Clearing CUDA cache...")
         torch.cuda.empty_cache()
         gc.collect()
     np.set_printoptions(precision=4, suppress=True)
