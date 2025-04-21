@@ -10,7 +10,7 @@ experiment:
   local_dir: outputs/checkpoints
   is_training: True
   save_checkpoint_steps: 100  # Save a checkpoint every 100 steps
-  save_checkpoint_epochs: 0   # Save a checkpoint every epoch (default behavior)
+  save_checkpoint_epochs: 1   # Save a checkpoint every epoch (default behavior)
 
 # ----- Dataset-related properties -----
 dataset: 
@@ -63,21 +63,20 @@ NN:
   frozen_weights: 
   masks: 
   max_num_edges: 56
-  backbone: resnet101
+  backbone: resnet50
   in_channel: 3
   dilation: True
   position_embedding: sine
 
   # Transformer
-  enc_layers: 8 
-  dec_layers: 8
+  enc_layers: 6 
+  dec_layers: 6
   dim_feedforward: 2048
   hidden_dim: 256 
-  dropout: 0.2
+  dropout: 0.1
   nheads: 8 
   num_queries: 25
   pre_norm: True
-  aux_loss: true          # enable auxiliary loss
 
   # ----- Losses ----
   loss:
@@ -101,19 +100,19 @@ NN:
 trainer: 
   dry_run: False
   random_seed: 1
-  batch_size: 128
+  batch_size: 64
   devices: [0]
   without_matcher: true
-  epochs: 120
-  lr: 0.0001    # lower learning rate
+  epochs: 80
+  lr: 0.0002
   lr_backbone: 1e-5
   optimizer: AdamW
-  weight_decay: 5e-4
+  weight_decay: 1e-4
   lr_scheduling: "warm_cosine"
-  lr_drop: 80
+  lr_drop: 200
   clip_max_norm: 0.1
   early_stopping:
     window: 0.0001
-    patience: 80
+    patience: 50
   with_visualization: true  # Log visualizations of predicted sewing patterns
   return_stitches: true
