@@ -49,8 +49,8 @@ dataset:
 data_split:
   type: percent
   split_on: folder
-  valid_per_type: 20
-  test_per_type: 10
+  valid_per_type: 1 #20
+  test_per_type: 1 #10
 
 
 # ----- Network Architecture --------
