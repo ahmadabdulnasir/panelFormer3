@@ -56,7 +56,7 @@ powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | ie
 
 ```bash
 mkdir -p former/assets/ckpts
-wget https://huggingface.co/liulj/sewformer/resolve/main/Detr2d-V6-final-dif-ce-focal-schd-agp_checkpoint_37.pth -O former/assets/ckpts/Detr2d-V6-final-dif-ce-focal-schd-agp_checkpoint_37.pth
+wget "https://storage.googleapis.com/wandb-artifacts-prod/wandb_artifacts/616401790/1671104183/a6e7a724efedbb00e75cd56647c8ff37?X-Goog-Algorithm=GOOG4-RSA-SHA256&X-Goog-Credential=gorilla-files-url-signer-man%40wandb-production.iam.gserviceaccount.com%2F20250423%2Fauto%2Fstorage%2Fgoog4_request&X-Goog-Date=20250423T144911Z&X-Goog-Expires=3599&X-Goog-Signature=7563a5c4756b5647896b2ad5681412d296a5c3b00501792bb7eb4403fc08489510bdd3a2d0a4e0e79be4783239fd8ad445dc2308594cf847b73e39a4a69e9e31ddc1f017b98c61e34c37f03029d9e5f562a19c2bff5819c5d947b60e5d15c9f513863599f458bfbcc0786a5f8b589432e8c63d34fd359ad8da6730c0ec9661fcfee218832ddcd4ac5eb907181af10656b8ccb54123545ec062906d9089b0bbe236b60ac51cfe33e2f3e50b12f6daf33d770b197bb7faf936c38be065261619b2f98fb1b371f954bae73756927ca29e6ddfd81e55201b519ccdb2bb652705b7c1f41bd8ef3f839129fec66c7fef4b8ae99297c550baadbbd460bb65abdb39e1e7&X-Goog-SignedHeaders=host&X-User=ahmadabdulnasir&response-content-disposition=attachment%3B+filename%3D%22checkpoint_119.pth%22" -O former/assets/ckpts/Detr2d-V6-final-dif-ce-focal-schd-agp_checkpoint_37.pth
 ```
 
 ### 4. GPU Support

@@ -63,7 +63,7 @@ NN:
   frozen_weights: 
   masks: 
   max_num_edges: 56
-  backbone: resnet101
+  backbone: resnet50
   in_channel: 3
   dilation: True
   position_embedding: sine
