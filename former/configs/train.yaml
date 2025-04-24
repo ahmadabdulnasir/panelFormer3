@@ -101,7 +101,7 @@ NN:
 trainer: 
   dry_run: False
   random_seed: 1
-  batch_size: 64
+  batch_size: 32
   devices: [0, 1]
   without_matcher: true
   epochs: 120
