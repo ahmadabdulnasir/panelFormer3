@@ -1,0 +1,144 @@
+# Default configuration for PanelFormer
+
+# ----- Experiment Configuration -----
+experiment:
+  project_name: PanelFormer
+  run_name: Default
+  run_id: null
+  local_dir: outputs/checkpoints
+  is_training: false  # Set to true for training
+
+# ----- Dataset-related properties -----
+dataset:
+  class: GarmentDataset
+  wrapper: GarmentDatasetWrapper
+  train_dir: DATASET/train
+  val_dir: DATASET/val
+  image_size: 1024
+  batch_size: 32
+  num_workers: 4
+  train_split: 0.8
+  val_split: 0.1
+  test_split: 0.1
+  max_pattern_len: 23   # Overridden if panel_classification is specified
+  max_panel_len: 14
+  max_num_stitches: 28   # when training with stitches
+  max_stitch_edges: 56
+  element_size: 4
+  rotation_size: 4
+  translation_size: 3
+  use_sim: true
+  use_smpl_loss: true
+  panel_classification: ./configs/data_configs/panel_classes_condenced.json
+  filter_by_params: ./configs/data_configs/param_filter.json
+  standardize:
+    gt_scale:
+      outlines: [26.674109, 29.560705, 1, 1]
+      rotations: [1.3826834, 1.9238795, 1.2877939, 1]
+      stitch_tags: [119.964195, 109.62911, 105.657364]
+      translations: [109.58753, 51.449017, 37.846794]
+    gt_shift:
+      outlines: [0, 0, 0, 0]
+      rotations: [-0.38268343, -0.9238795, -1, 0]
+      stitch_tags: [-59.99474, -78.23346, -52.926674]   
+      translations: [-55.25636, -20.001333, -17.086796]
+  split:
+    type: percent
+    split_on: folder
+    valid_per_type: 10
+    test_per_type: 10
+
+# Model parameters
+model:
+  name: PanelFormer
+  num_queries: 25
+  num_edges: 56
+  d_model: 256
+  nhead: 8
+  num_encoder_layers: 6
+  num_decoder_layers: 6
+  dim_feedforward: 2048
+  dropout: 0.1
+  backbone: resnet50
+  in_channel: 3
+  dilation: true
+  position_embedding: sine
+  pre_norm: true
+  aux_loss: true
+  frozen_weights: null
+  masks: null
+   # Transformer
+  enc_layers: 8 
+  dec_layers: 8
+  dim_feedforward: 2048
+  hidden_dim: 256 
+  dropout: 0.2
+  nheads: 8 
+  num_queries: 25
+  aux_loss: true          # enable auxiliary loss
+
+  # Loss weights
+  loss:
+    components: [shape, loop, rotation, translation]
+    quality_components: [shape, discrete, rotation, translation]
+    edge_weight: 1.0
+    loop_weight: 1.0
+    rotation_weight: 1.0
+    translation_weight: 1.0
+    curve_weight: 0.3
+    stitches: ce
+    lepoch: 0
+    eos_coef: 0.1
+    panel_origin_invariant_loss: false
+    panel_order_inariant_loss: false
+    epoch_with_order_matching: 0
+    order_by: shape_translation
+
+# Training parameters
+training:
+  is_training: true
+  project_name: PanelFormer
+  run_name: Default
+  run_id: null
+  num_epochs: 100
+  learning_rate: 1e-4
+  learning_rate_backbone: 1e-5
+  weight_decay: 1e-4
+  optimizer: AdamW
+  lr_scheduling: warm_cosine
+  lr_drop: 80
+  lr: 0.0001    # lower learning rate
+  lr_backbone: 1e-5
+  clip_max_norm: 0.1
+  early_stopping_patience: 50
+  early_stopping_window: 0.0001
+  random_seed: 1
+  devices: [0]
+  without_matcher: true
+  dry_run: false
+  output_dir: outputs
+  checkpoint_dir: outputs/checkpoints
+  save_checkpoint_steps: 100
+  save_checkpoint_epochs: 1
+  log_interval: 10
+  with_visualization: true
+  return_stitches: true
+
+# Inference parameters
+inference:
+  checkpoint_path: null  # Path to pre-trained model for inference
+  step_trained: null
+  output_dir: outputs/predictions
+  visualization_dir: outputs/visualizations
+  visualize: true
+
+# Augmentation parameters
+augmentation:
+  enabled: true
+  horizontal_flip: true
+  vertical_flip: false
+  brightness_range: [0.8, 1.2]
+  contrast_range: [0.8, 1.2]
+  rotation_range: 15
+
+

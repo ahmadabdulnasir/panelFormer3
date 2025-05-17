@@ -117,24 +117,13 @@ def load_model():
         if os.path.exists(model_path):
             print(f"Loading Trained weights from {model_path}")
             try:
-                # First try with weights_only=False to handle PyTorch 2.6 security changes
-                try:
-                    checkpoint = torch.load(model_path, map_location=device, weights_only=False)
-                    print("Loaded checkpoint with weights_only=False")
-                except Exception as e1:
-                    print(f"Error loading with weights_only=False: {e1}")
-                    # Try with safe_globals context manager
-                    from torch.serialization import safe_globals
-                    print("Trying with safe_globals for CosineAnnealingLR...")
-                    with safe_globals(['torch.optim.lr_scheduler.CosineAnnealingLR']):
-                        checkpoint = torch.load(model_path, map_location=device)
-                        print("Loaded checkpoint with safe_globals")
+                # Load the checkpoint
+                checkpoint = torch.load(model_path, map_location=device)
                 
-                # Load state dict directly (without DataParallel wrapping) with strict=False
+                # Load state dict directly (without DataParallel wrapping)
                 if 'model_state_dict' in checkpoint:
-                    # Use strict=False to ignore mismatched keys
-                    model.load_state_dict(checkpoint['model_state_dict'], strict=False)
-                    print("Trained weights loaded successfully (with strict=False to handle architecture differences)")
+                    model.load_state_dict(checkpoint['model_state_dict'])
+                    print("Trained weights loaded successfully")
                 else:
                     print("No model_state_dict found in checkpoint")
             except Exception as e:
@@ -174,11 +163,10 @@ def load_source_appearance(img_path):
     # Pad image to make it square
     pad_ref_img = T.Pad(padding=(int((max_size - h) / 2), int((max_size - w) / 2)), fill=255)(ref_img)
     
-    # Resize, convert to tensor, and normalize with ImageNet mean and std
+    # Resize and convert to tensor
     img_tensor = T.Compose([
         T.Resize((384, 384)),
-        T.ToTensor(),
-        T.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])  # ImageNet normalization
+        T.ToTensor()
     ])(pad_ref_img)
     
     return img_tensor.unsqueeze(0)
@@ -348,11 +336,6 @@ async def get_prediction(prediction_id: str):
     # Return the first pattern image found
     image_path = pattern_images[0]
     return FileResponse(image_path)
-
-
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
 
 
 if __name__ == "__main__":

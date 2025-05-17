@@ -14,6 +14,7 @@ export PYTHONPATH=$PYTHONPATH:$(pwd):$(pwd)/Factory/packages
 mkdir -p "$(pwd)/former/assets/data_configs"
 mkdir -p "$(pwd)/data_configs"
 mkdir -p "$(pwd)/outputs/checkpoints"
+mkdir -p "$(pwd)/outputs/predictions"
 
 # Copy configuration files if they don't exist in the target location
 if [ ! -f "$(pwd)/former/assets/data_configs/panel_classes_condenced.json" ]; then

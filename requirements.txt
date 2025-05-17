@@ -17,6 +17,5 @@ numba
 pytz
 cairosvg
 scikit-learn
-wandb
 pyaml
 psutil

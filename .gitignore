@@ -1,2 +1,40 @@
-*.pth
-__pycache__
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# Environment variables
+.env
+
+# Data files
+data/sample_dataset/
+
+Research_paper.txt
+
+# Logs
+logs/
+
+# TensorBoard
+tensorboard/
+
+# Checkpoints
+checkpoints/
+
+DATASET/*
+outputs/*
+
+.cursorignore
+.cursor/*
+
+# windsurf rules
+.windsurfrules
+implementationPlan.md
+full_sewing_pattern_model_pipeline.md
+.DS_Store
+static/*

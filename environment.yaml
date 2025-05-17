@@ -1,4 +1,4 @@
-name: techpack
+name: panelformer3
 channels:
   - conda-forge
   - defaults
@@ -10,7 +10,7 @@ dependencies:
   - pytorch 
   - torchvision 
   - torchaudio 
-  - pytorch-cuda=12.1
+  # - pytorch-cuda=12.1
   - opencv
   - pip: 
     - -r requirements.txt 

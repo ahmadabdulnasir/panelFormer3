@@ -1,5 +1,5 @@
 [project]
-name = "techpack"
+name = "panelFormer"
 version = "0.1.0"
 author = "Ahmad Abdulnasir Shuaib (me@ahmadabdulnasir.com.ng)"
 description = "Add your description here"
@@ -30,3 +30,6 @@ dependencies = [
     "uvicorn>=0.34.0",
     "wandb>=0.12.16",
 ]
+
+[tool.uv.workspace]
+members = ["panelFormer"]
