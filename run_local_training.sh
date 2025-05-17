@@ -2,16 +2,15 @@
 # Script to run a local training session for PanelFormer
 
 # Set environment variables
-export PYTHONPATH=$PYTHONPATH:/Users/ahmadabdulnasirshuaib/wsp/labs/panelFormer3
+export PYTHONPATH=$PYTHONPATH:/home/ubuntu/Panelformer/hybrid
 
 # Create output directories
 mkdir -p outputs/checkpoints
 mkdir -p outputs/logs
-mkdir -p outputs/artifacts
 
 
 # Run the local training script
-cd /Users/ahmadabdulnasirshuaib/wsp/labs/panelFormer3
+cd /home/ubuntu/Panelformer/hybrid
 python train/train_local.py --config configs/train.yaml
 
 echo "Local training completed. Check outputs/ for results."
