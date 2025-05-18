@@ -23,7 +23,7 @@ from core.local_experiment import ExperimentWrapper
 from core import data
 # Create FastAPI app
 app = FastAPI(
-    title="Fashable.AI Tech Pack API",
+    title="Fashable.AI PanelFormer Sewing Pattern API",
     description="API for generating sewing patterns from garment images",
     version="1.0.0"
 )
@@ -348,11 +348,6 @@ async def get_prediction(prediction_id: str):
     # Return the first pattern image found
     image_path = pattern_images[0]
     return FileResponse(image_path)
-
-
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
 
 
 if __name__ == "__main__":

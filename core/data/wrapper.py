@@ -210,7 +210,7 @@ class GarmentDatasetWrapper(object):
     def get_data_lists(self, training, validation, testing, split_info=None):
 
         if 'filename' in split_info and  os.path.exists(split_info['filename']):
-            print('GarmentDatasetWrapper:: Load Dataset split: {} '.format(split_info['filename']))
+            print('Load Dataset split: {} '.format(split_info['filename']))
         else:
             data_lists = {"train": [], "validation": [], "test": []}
             for name, split in {"train":training, "validation": validation, "test": testing}.items():
@@ -229,7 +229,6 @@ class GarmentDatasetWrapper(object):
                 json.dump(data_lists, f, indent=2)
             split_info['filename'] = save_path
 
-            # print('GarmentDatasetWrapper:: Save Dataset split: {} '.format(split_info['filename']))
 
 
     def get_real_test_ids(self, batch_size, fpose=False):
@@ -271,7 +270,6 @@ class GarmentDatasetWrapper(object):
         self.dataset.standardize(self.training)
         
     
-    # --------- Managing predictions on this data ---------
     def predict(self, model, save_to, sections=['test'], single_batch=False, orig_folder_names=False, use_gt_stitches=False):
         """Save model predictions on the given dataset section"""
         prediction_path = os.path.join(save_to, ('nn_pred_' + datetime.now().strftime('%y%m%d-%H-%M-%S')))

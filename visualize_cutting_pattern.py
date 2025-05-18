@@ -9,6 +9,8 @@ from PIL import Image
 import matplotlib.pyplot as plt
 import torchvision.transforms as T
 from pathlib import Path
+import glob
+import shutil
 
 # Import local modules
 root_path = os.path.dirname(os.path.abspath(__file__))
@@ -148,8 +150,17 @@ def load_source_appearance(img_path):
     
     return img_tensor.unsqueeze(0), ref_img
 
-def visualize_panels(img_path, output_path=None):
-    """Visualize input image with panels side by side"""
+def find_svg_files(directory):
+    """Find all SVG files in the directory and its subdirectories"""
+    svg_files = []
+    for root, _, files in os.walk(directory):
+        for file in files:
+            if file.endswith(".svg"):
+                svg_files.append(os.path.join(root, file))
+    return svg_files
+
+def visualize_cutting_pattern(img_path, output_path=None):
+    """Visualize input image with complete cutting pattern"""
     # Load model
     model, shape_dataset, device = load_model()
     
@@ -173,8 +184,8 @@ def visualize_panels(img_path, output_path=None):
     with torch.no_grad():
         output = model(img_tensor.to(device), return_stitches=True)
     
-    # Save prediction
     try:
+        # Save prediction
         panel_order, panel_idx, prediction_img = shape_dataset.save_prediction_single(
             output,
             dataname=prediction_id,
@@ -198,31 +209,63 @@ def visualize_panels(img_path, output_path=None):
             else:
                 raise FileNotFoundError(f"No pattern image found in {prediction_dir}")
         
-        # Create visualization with input image and panels side by side
-        fig, axes = plt.subplots(1, 2, figsize=(12, 6))
+        # Find SVG files (these contain the cutting pattern details)
+        svg_files = find_svg_files(prediction_dir)
         
-        # Display original image
-        axes[0].imshow(original_img)
-        axes[0].set_title("Input Image")
-        axes[0].axis("off")
+        # Create a figure with the input image and cutting pattern
+        fig = plt.figure(figsize=(15, 10))
         
-        # Display pattern image
+        # Create a 2x2 grid for the layout
+        gs = fig.add_gridspec(2, 2, height_ratios=[1, 1.5])
+        
+        # Add the original image in the top-left
+        ax1 = fig.add_subplot(gs[0, 0])
+        ax1.imshow(original_img)
+        ax1.set_title("Input Garment Image")
+        ax1.axis("off")
+        
+        # Add the pattern visualization in the top-right
+        ax2 = fig.add_subplot(gs[0, 1])
         pattern_img = Image.open(prediction_img)
-        axes[1].imshow(pattern_img)
-        axes[1].set_title("Panel Visualization")
-        axes[1].axis("off")
+        ax2.imshow(pattern_img)
+        ax2.set_title("Panel Visualization")
+        ax2.axis("off")
+        
+        # Add the complete cutting pattern in the bottom row (spanning both columns)
+        ax3 = fig.add_subplot(gs[1, :])
+        
+        # If we have SVG files, convert the first one to PNG and display it
+        if svg_files:
+            from cairosvg import svg2png
+            
+            # Use the first SVG file (usually the main pattern)
+            svg_file = svg_files[0]
+            png_file = os.path.join(prediction_dir, "cutting_pattern.png")
+            
+            # Convert SVG to PNG
+            svg2png(url=svg_file, write_to=png_file, scale=2.0)
+            
+            # Display the PNG
+            cutting_pattern = Image.open(png_file)
+            ax3.imshow(cutting_pattern)
+            ax3.set_title("Complete Cutting Pattern")
+            ax3.axis("off")
+        else:
+            ax3.text(0.5, 0.5, "No cutting pattern available", 
+                     horizontalalignment='center', verticalalignment='center',
+                     transform=ax3.transAxes, fontsize=14)
         
         plt.tight_layout()
         
-        # Save visualization
-        vis_path = os.path.join(prediction_dir, "panels_visualization.png")
+        # Save the complete visualization
+        vis_path = os.path.join(prediction_dir, "complete_pattern_visualization.png")
         plt.savefig(vis_path, dpi=300, bbox_inches="tight")
         plt.show()
         plt.close()
         
         print(f"Visualization saved to {vis_path}")
         return vis_path, prediction_dir
-    
+            
     except Exception as e:
         print(f"Error during visualization: {e}")
         # Create a simple visualization with just the input image
@@ -241,11 +284,11 @@ def visualize_panels(img_path, output_path=None):
         return vis_path, prediction_dir
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Visualize garment panels from an input image")
+    parser = argparse.ArgumentParser(description="Visualize complete cutting pattern from an input image")
     parser.add_argument("--image", type=str, required=True, help="Path to input image")
     parser.add_argument("--output", type=str, default=None, help="Output directory for visualizations")
     
     args = parser.parse_args()
     
-    vis_path, _ = visualize_panels(args.image, args.output)
+    vis_path, _ = visualize_cutting_pattern(args.image, args.output)
     print(f"Visualization complete. Results saved to {vis_path}")
